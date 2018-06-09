@@ -91,12 +91,11 @@ void updateHaptics(void) {
 		simulation->updateHaptics();
 		simClock.stop();
 
-		lDt = simClock.getCurrentTimeSeconds();
+		simulation->update(simClock.getCurrentTimeSeconds());
 
 		simClock.reset();
 		simClock.start();
 
-		simulation->update(lDt);
 	}
 	simulation->isFinished = true;
 }

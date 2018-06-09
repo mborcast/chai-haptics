@@ -1,7 +1,9 @@
 #pragma once
 #include "chai3d.h"
 #include "SceneGraph.h"
-
+#include "HapticDevice.h"
+#include "HapticPointer.h"
+#include "Piston.h"
 class Simulation
 {
 public:
@@ -14,11 +16,17 @@ public:
 	void update(double pDt);
 	void renderCamera(double pW, double pH);
 	void closeGracefully();
+
+
 private:
 	SceneGraph* _sceneGraph;
-	double _angles;
-	cHapticDeviceHandler* _handler;
-	cGeneric3dofPointer* _tool;
-	cMesh* _object;
+	HapticDevice* _hapticDevice;
+	HapticPointer* _hapticPointer;
+
+	Piston* _piston;
+
+	void createSceneGraph();
+	void initializeHaptics();
+	void createPistons(int pTotal);
 };
 

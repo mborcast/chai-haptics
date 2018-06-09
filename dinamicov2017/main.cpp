@@ -7,12 +7,52 @@
 #include <math.h>
 #include "chai3d.h"
  
+#include "Simulation.h"
+
 const int WINDOW_SIZE_W = 800;
 const int WINDOW_SIZE_H = 600;
+
+double currentWidth = 0;
+double currentHeight = 0;
 
 void resizeWindow(int w, int h);
 void keySelect(unsigned char key, int x, int y);
 void updateGraphics(void);
+void updateHaptics(void);
+void close(void);
+
+cPrecisionClock simClock;
+
+cThread* hapticsThread;
+
+Simulation* simulation;
+
+void updateGraphics(void) {
+
+	simulation->renderCamera(currentWidth, currentHeight);
+
+	glutSwapBuffers();
+
+	if (glGetError() != GL_NO_ERROR) {
+		printf("Error:  %s\n", gluErrorString(glGetError()));
+	}
+	if (simulation->isRunning) {
+		glutPostRedisplay();
+	}
+}
+void keySelect(unsigned char key, int x, int y) {
+	switch (key) {
+	case 27: case 'x':
+		exit(0);
+		break;
+	}
+}
+void resizeWindow(int w, int h) {
+	currentWidth = w;
+	currentHeight = h;
+	glViewport(0, 0, currentWidth, currentHeight);
+}
+
 
 int main(int argc, char** argv) {
 
@@ -30,26 +70,37 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(resizeWindow);
 	glutSetWindowTitle("Piston Haptics");
 
+	simulation = new Simulation();
+
+	hapticsThread = new cThread();
+	hapticsThread->set(updateHaptics, CHAI_THREAD_PRIORITY_HAPTICS);
+
 	glutMainLoop();
+
+	close();
+
 	return 0;
 }
-
-void updateGraphics(void) {
-	// Swap buffers
-	glutSwapBuffers();
-
-	// check for any OpenGL errors
-	GLenum err;
-	err = glGetError();
-	if (err != GL_NO_ERROR) printf("Error:  %s\n", gluErrorString(err));
-
-	glutPostRedisplay();
+void close(void) {
+	while (!simulation->isFinished) { cSleepMs(100); }
+	simulation->closeGracefully();
+	delete simulation;
+	delete hapticsThread;
 }
-void keySelect(unsigned char key, int x, int y) {
-	if ((key == 27) || (key == 'x')) {
-		exit(0);
+
+void updateHaptics(void) {
+	simClock.reset();
+
+	while (simulation->isRunning) {
+		simulation->updateHaptics();
+		simClock.stop();
+
+		double lDt = simClock.getCurrentTimeSeconds();
+
+		simClock.reset();
+		simClock.start();
+
+		simulation->updateSimulation(lDt);
 	}
-}
-void resizeWindow(int w, int h) {
-	glViewport(0, 0, w, h);
+	simulation->isFinished = true;
 }

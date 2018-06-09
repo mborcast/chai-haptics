@@ -1,10 +1,4 @@
 #include "stdafx.h"
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include "chai3d.h"
  
 #include "Simulation.h"
@@ -43,7 +37,7 @@ void updateGraphics(void) {
 void keySelect(unsigned char key, int x, int y) {
 	switch (key) {
 	case 27: case 'x':
-		exit(0);
+		close();
 		break;
 	}
 }
@@ -86,21 +80,23 @@ void close(void) {
 	simulation->closeGracefully();
 	delete simulation;
 	delete hapticsThread;
+	exit(0);
 }
 
 void updateHaptics(void) {
 	simClock.reset();
+	double lDt = 0;
 
 	while (simulation->isRunning) {
 		simulation->updateHaptics();
 		simClock.stop();
 
-		double lDt = simClock.getCurrentTimeSeconds();
+		lDt = simClock.getCurrentTimeSeconds();
 
 		simClock.reset();
 		simClock.start();
 
-		simulation->updateSimulation(lDt);
+		simulation->update(lDt);
 	}
 	simulation->isFinished = true;
 }

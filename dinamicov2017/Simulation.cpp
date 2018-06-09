@@ -26,15 +26,10 @@ Simulation::Simulation() {
 
 	// create a haptic device _handler
 	_handler = new cHapticDeviceHandler();
-
-	// get access to the first available haptic device
 	cGenericHapticDevice* hapticDevice;
 	_handler->getDevice(hapticDevice, 0);
-
-	// retrieve information about the current haptic device
 	cHapticDeviceInfo info;
-	if (hapticDevice)
-	{
+	if (hapticDevice) {
 		info = hapticDevice->getSpecifications();
 	}
 
@@ -87,7 +82,7 @@ void Simulation::updateHaptics() {
 	_tool->applyForces();
 }
 
-void Simulation::updateSimulation(double pDt) {
+void Simulation::update(double pDt) {
 	_angles += pDt * 500;
 	float lOffset = 1 * sin(_angles * CHAI_PI / 180);
 	_object->setPos(cVector3d(lOffset, 0, 0));

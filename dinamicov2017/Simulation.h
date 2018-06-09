@@ -10,7 +10,7 @@ public:
 	bool isFinished;
 
 	void updateHaptics();
-	void updateSimulation(double pDt);
+	void update(double pDt);
 	void renderCamera(double pW, double pH);
 	void closeGracefully();
 private:

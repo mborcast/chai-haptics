@@ -20,21 +20,31 @@ bool Actor::load(std::string pPath) {
 	this->setPosition(cVector3d(0,0,0));
 	cTexture2D* texture;
 	texture = new cTexture2D();
-	_mesh->setTexture(texture, true);
 
+	_mesh->m_texture = new cTexture2D();
+
+	// load a texture image file    
+	_mesh->m_texture->loadFromFile("../3dmodels/pp.bmp");
+	// enable texture mapping
 	_mesh->setUseTexture(true);
+	// assign a white material color that is modulated with the texture
+	//_mesh->m_material->setWhite();
 
-	bool fileload;
-	fileload = _mesh->m_texture->loadFromFile("../3dmodels/pp.bmp");
-	if (!fileload)
-	{
-		printf("Error - No se pudo cargar la textura.\n");
-		return (-1);
-	}
+	//_mesh->setTexture(texture, true);
+
+	//_mesh->setUseTexture(true);
+
+	//bool fileload;
+	//fileload = _mesh->m_texture->loadFromFile("../3dmodels/pp.bmp");
+	//if (!fileload)
+	//{
+	//	printf("Error - No se pudo cargar la textura.\n");
+	//	return (-1);
+	//}
 	_mesh->m_texture->setWrapMode(GL_REPEAT, GL_REPEAT);
-	// coordenadas de textura
-	
-	_mesh->setUseTexture(true, true);
+	//// coordenadas de textura
+	//
+	//_mesh->setUseTexture(true, true);
 }
 
 void Actor::addPointerCollision(HapticPointer* pPointer) {

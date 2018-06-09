@@ -53,14 +53,22 @@ void Simulation::initializeHaptics() {
 	_sceneGraph->addChild(_hapticPointer->getTool());
 }
 void Simulation::addPiston(double pSpeed, cVector3d pPosition) {
+	std::string lPath = "../3dmodels/cube.obj";
+
 	_pistons.push_back(new Piston(_sceneGraph->getWorld(), pSpeed));
-	_pistons[_totalPistons]->load("../3dmodels/cube.obj");
-	_pistons[_totalPistons]->addPointerCollision(_hapticPointer);
-	_pistons[_totalPistons]->setFriction(0.1, 0.2);
-	_pistons[_totalPistons]->setPosition(pPosition);
-	_pistons[_totalPistons]->setScale(cVector3d(0.5, 0.5, 0.5));
-	_sceneGraph->addChild(_pistons[_totalPistons]->getMesh());
-	_totalPistons++;
+	if (_pistons[_totalPistons]->load(lPath)) {
+		_pistons[_totalPistons]->addPointerCollision(_hapticPointer);
+		_pistons[_totalPistons]->setFriction(0.1, 0.2);
+		_pistons[_totalPistons]->setPosition(pPosition);
+		_pistons[_totalPistons]->setScale(cVector3d(0.5, 0.5, 0.5));
+		_sceneGraph->addChild(_pistons[_totalPistons]->getMesh());
+		_totalPistons++;
+	}
+	else {
+		std::cout << "Path: " << lPath << " not found" << std::endl;
+		delete _pistons[_totalPistons];
+		_pistons.pop_back();
+	}
 }
 
 void Simulation::updateHaptics() {

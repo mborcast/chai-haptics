@@ -85,17 +85,12 @@ void close(void) {
 
 void updateHaptics(void) {
 	simClock.reset();
-	double lDt = 0;
-
 	while (simulation->isRunning) {
 		simulation->updateHaptics();
 		simClock.stop();
-
 		simulation->update(simClock.getCurrentTimeSeconds());
-
 		simClock.reset();
 		simClock.start();
-
 	}
 	simulation->isFinished = true;
 }

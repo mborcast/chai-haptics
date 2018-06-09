@@ -38,7 +38,7 @@ void keySelect(unsigned char key, int x, int y) {
 	switch (key) {
 	case 27: case 'x':
 		close();
-		break;
+		exit(0);
 	}
 }
 void resizeWindow(int w, int h) {
@@ -71,16 +71,16 @@ int main(int argc, char** argv) {
 
 	glutMainLoop();
 
-	close();
-
 	return 0;
 }
 void close(void) {
+
+	simulation->isRunning = false;
+
 	while (!simulation->isFinished) { cSleepMs(100); }
 	simulation->closeGracefully();
 	delete simulation;
 	delete hapticsThread;
-	exit(0);
 }
 
 void updateHaptics(void) {

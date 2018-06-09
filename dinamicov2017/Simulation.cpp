@@ -54,7 +54,7 @@ void Simulation::initializeHaptics() {
 }
 void Simulation::addPiston(double pSpeed, cVector3d pPosition) {
 	_pistons.push_back(new Piston(_sceneGraph->getWorld(), pSpeed));
-	_pistons[_totalPistons]->load("../imagenes/cube.obj");
+	_pistons[_totalPistons]->load("../3dmodels/cube.obj");
 	_pistons[_totalPistons]->addPointerCollision(_hapticPointer);
 	_pistons[_totalPistons]->setFriction(0.1, 0.2);
 	_pistons[_totalPistons]->setPosition(pPosition);

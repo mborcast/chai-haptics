@@ -1,5 +1,6 @@
 #pragma once
 #include "chai3d.h"
+#include "SceneGraph.h"
 
 class Simulation
 {
@@ -14,10 +15,8 @@ public:
 	void renderCamera(double pW, double pH);
 	void closeGracefully();
 private:
+	SceneGraph* _sceneGraph;
 	double _angles;
-	cWorld * _world;
-	cCamera* _camera;
-	cLight * _light;
 	cHapticDeviceHandler* _handler;
 	cGeneric3dofPointer* _tool;
 	cMesh* _object;

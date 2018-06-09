@@ -16,17 +16,12 @@ void updateHaptics(void);
 void close(void);
 
 cPrecisionClock simClock;
-
 cThread* hapticsThread;
-
 Simulation* simulation;
 
 void updateGraphics(void) {
-
 	simulation->renderCamera(currentWidth, currentHeight);
-
 	glutSwapBuffers();
-
 	if (glGetError() != GL_NO_ERROR) {
 		printf("Error:  %s\n", gluErrorString(glGetError()));
 	}
@@ -49,7 +44,6 @@ void resizeWindow(int w, int h) {
 
 
 int main(int argc, char** argv) {
-
 	glutInit(&argc, argv);
 
 	glutInitWindowPosition(
@@ -65,16 +59,13 @@ int main(int argc, char** argv) {
 	glutSetWindowTitle("Piston Haptics");
 
 	simulation = new Simulation();
-
 	hapticsThread = new cThread();
 	hapticsThread->set(updateHaptics, CHAI_THREAD_PRIORITY_HAPTICS);
 
 	glutMainLoop();
-
 	return 0;
 }
 void close(void) {
-
 	simulation->isRunning = false;
 
 	while (!simulation->isFinished) { cSleepMs(100); }

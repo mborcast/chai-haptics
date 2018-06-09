@@ -7,22 +7,14 @@ Simulation::Simulation() {
 	isFinished = false;
 	_angles = 0;
 
-	_world = new cWorld();
-
-	_world->setBackgroundColor(0.0, 0.0, 0.0);
-	_camera = new cCamera(_world);
-	_world->addChild(_camera);
-	_camera->set(
+	_sceneGraph = new SceneGraph();
+	_sceneGraph->addCamera(
 		cVector3d(3.0, 0.0, 0.0),
 		cVector3d(0.0, 0.0, 0.0),
 		cVector3d(0.0, 0.0, 1.0));
-	_camera->setClippingPlanes(0.01, 10.0);
-	_light = new cLight(_world);
-	_camera->addChild(_light);
-	_light->setEnabled(true);
-	_light->setPos(cVector3d(2.0, 0.5, 1.0));
-	_light->setDir(cVector3d(-2.0, 0.5, 1.0));
-
+	_sceneGraph->addLight(
+		cVector3d(2.0, 0.5, 1.0),
+		cVector3d(-2.0, 0.5, 1.0));
 
 	// create a haptic device _handler
 	_handler = new cHapticDeviceHandler();
@@ -34,8 +26,7 @@ Simulation::Simulation() {
 	}
 
 	// create a 3D _tool and add it to the world
-	_tool = new cGeneric3dofPointer(_world);
-	_world->addChild(_tool);
+	_tool = new cGeneric3dofPointer(_sceneGraph->getWorld());
 	_tool->setHapticDevice(hapticDevice);
 	_tool->start();
 	_tool->setWorkspaceRadius(1.0);
@@ -47,12 +38,11 @@ Simulation::Simulation() {
 	_tool->m_proxyPointForceModel->m_useDynamicProxy = true;
 	double workspaceScaleFactor = _tool->getWorkspaceScaleFactor();
 	double stiffnessMax = info.m_maxForceStiffness / workspaceScaleFactor;
+	_sceneGraph->addChild(_tool);
 
-
-
+	//instantiate actor
 	// create a virtual mesh
-	_object = new cMesh(_world);
-	_world->addChild(_object);
+	_object = new cMesh(_sceneGraph->getWorld());
 	_object->setPos(0.0, 0.0, 0.0);
 	bool fileload = _object->loadFromFile("../imagenes/cube.obj");
 	if (!fileload) {
@@ -69,14 +59,18 @@ Simulation::Simulation() {
 	_object->createAABBCollisionDetector(1.01 * proxyRadius, true, false);
 	_object->setStiffness(stiffnessMax, true);
 	_object->setFriction(0.1, 0.2, true);
+	_sceneGraph->addChild(_object);
 }
 
 
 Simulation::~Simulation() {
+	if (_sceneGraph) {
+		delete _sceneGraph;
+	}
 }
 
 void Simulation::updateHaptics() {
-	_world->computeGlobalPositions(true);
+	_sceneGraph->updateChildrenPositions(true);
 	_tool->updatePose();
 	_tool->computeInteractionForces();
 	_tool->applyForces();
@@ -89,7 +83,7 @@ void Simulation::update(double pDt) {
 }
 
 void Simulation::renderCamera(double pW, double pH) {
-	_camera->renderView(pW, pH);
+	_sceneGraph->renderCameraView(pW, pH);
 }
 void Simulation::closeGracefully() {
 	_tool->stop();

@@ -5,10 +5,13 @@
 Simulation::Simulation() {
 	isRunning = true;
 	isFinished = false;
+	_totalPistons = 0;
 
 	this->createSceneGraph();
 	this->initializeHaptics();
-	this->createPistons();
+	addPiston(500, cVector3d(0, -1, 0));
+	addPiston(1800, cVector3d(0, 0, 0));
+	addPiston(50, cVector3d(0, 1, 0));
 }
 
 
@@ -27,8 +30,8 @@ Simulation::~Simulation() {
 void Simulation::createSceneGraph() {
 	_sceneGraph = new SceneGraph();
 	_sceneGraph->addCamera(
-		cVector3d(3.0, 0.0, 0.0),
-		cVector3d(0.0, 0.0, 0.0),
+		cVector3d(4.0, 0.0, 1.0),
+		cVector3d(0.5, 0.0, 0.0),
 		cVector3d(0.0, 0.0, 1.0));
 	_sceneGraph->addLight(
 		cVector3d(2.0, 0.5, 1.0),
@@ -49,25 +52,25 @@ void Simulation::initializeHaptics() {
 	_hapticPointer->setMaxStiffness(_hapticDevice->getCurrentDeviceInfo().m_maxForceStiffness);
 	_sceneGraph->addChild(_hapticPointer->getTool());
 }
-void Simulation::createPistons(int pTotal) {
-	if (!_sceneGraph) {
-		return;
-	}
-	_piston = new Piston(_sceneGraph->getWorld(), 500);
-	_piston->load("../imagenes/cube.obj");
-	_piston->addPointerCollision(_hapticPointer);
-	_piston->setFriction(0.1, 0.2);
-	_piston->setPosition(cVector3d(0, 0, 0));
-	_sceneGraph->addChild(_piston->getMesh());
+void Simulation::addPiston(double pSpeed, cVector3d pPosition) {
+	_pistons.push_back(new Piston(_sceneGraph->getWorld(), pSpeed));
+	_pistons[_totalPistons]->load("../imagenes/cube.obj");
+	_pistons[_totalPistons]->addPointerCollision(_hapticPointer);
+	_pistons[_totalPistons]->setFriction(0.1, 0.2);
+	_pistons[_totalPistons]->setPosition(pPosition);
+	_pistons[_totalPistons]->setScale(cVector3d(0.5, 0.5, 0.5));
+	_sceneGraph->addChild(_pistons[_totalPistons]->getMesh());
+	_totalPistons++;
 }
+
 void Simulation::updateHaptics() {
 	_sceneGraph->updateChildrenPositions(true);
 	_hapticPointer->update();
 }
 
 void Simulation::update(double pDt) {
-	if (_piston) {
-		_piston->update(pDt);
+	for (unsigned int i = 0; i < _totalPistons; i++) {
+		_pistons[i]->update(pDt);
 	}
 }
 

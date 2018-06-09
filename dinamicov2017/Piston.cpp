@@ -16,5 +16,6 @@ void Piston::setSpeed(double pValue) {
 void Piston::update(double pDt) {
 	_angles += pDt * _speed;
 	float lOffset = 1 * sin(_angles * CHAI_PI / 180);
-	this->setPosition(cVector3d(lOffset, 0, 0));
+	cVector3d lCurrent = this->getPosition();
+	this->setPosition(cVector3d(lOffset, lCurrent.y, lCurrent.z));
 }

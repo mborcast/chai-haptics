@@ -6,7 +6,9 @@ class Actor
 public:
 	Actor(cWorld* pWorld);
 	~Actor();
+	cVector3d getPosition();
 	void setPosition(cVector3d pPosition);
+	void setScale(cVector3d pScale);
 	bool load(std::string pPath);
 	void setFriction(double pStaticFriction, double pDynamicFriction);
 	void addPointerCollision(HapticPointer* pPointer);

@@ -37,8 +37,14 @@ void Actor::addPointerCollision(HapticPointer* pPointer) {
 void Actor::setFriction(double pStaticFriction, double pDynamicFriction) {
 	_mesh->setFriction(pStaticFriction, pDynamicFriction, true);
 }
+void Actor::setScale(cVector3d pScale) {
+	_mesh->scale(pScale);
+}
 void Actor::setPosition(cVector3d pPosition) {
 	_mesh->setPos(pPosition);
+}
+cVector3d Actor::getPosition() {
+	return _mesh->getPos();
 }
 cMesh* Actor::getMesh() {
 	return _mesh;

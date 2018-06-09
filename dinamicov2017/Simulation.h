@@ -4,6 +4,7 @@
 #include "HapticDevice.h"
 #include "HapticPointer.h"
 #include "Piston.h"
+
 class Simulation
 {
 public:
@@ -23,10 +24,11 @@ private:
 	HapticDevice* _hapticDevice;
 	HapticPointer* _hapticPointer;
 
-	Piston* _piston;
+	int _totalPistons;
+	std::vector<Piston*> _pistons;
 
 	void createSceneGraph();
 	void initializeHaptics();
-	void createPistons(int pTotal);
+	void addPiston(double pSpeed, cVector3d pPosition);
 };
 
